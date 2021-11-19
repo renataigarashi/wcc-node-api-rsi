@@ -19,6 +19,14 @@ exports.create = (req, res) => {
 })
 };
 
+exports.findAll = (req, res) => {
 
+     tabelaArtigos.findAll().then(function(data){
+        res.send(data);
+    })
+    .catch(function(){
+        res.status(500).send("Ocorreu um erro obtendo os artigos");
+    })
+}
 //promise - "promete que vai acontecer algo", mas isso pode ou não acontecer
 // a promise pode ser resolvida ou rejeitada (Ex: Ocorreu um erro ao tentar salvar);
