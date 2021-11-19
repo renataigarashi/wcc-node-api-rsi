@@ -15,10 +15,19 @@ const port = 8080;
 app.use(express.json());
 
 app.get("/", function(req,res){
-    res.send("DASA Educa - Artigos")
-})
+    res.send("DASA Educa - Artigos");
+});
+
+
+const database = require("./models"); //importar o banco
+database.sequelizeDatabase.sync(); //fazer a sincronizacao
+//database.sequelizeDatabase.sync({force: true}).then(() => console.log("Drop and re-sync db"))
+
+const router = require("./routes/artigos.routes");
+router(app);
 
 // Ouvindo a porta - 
 app.listen(port, function(){
     console.log("Ouvindo a porta:", port);
 });
+
