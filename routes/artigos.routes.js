@@ -20,15 +20,16 @@ module.exports = (app) => {
     const artigosController = require("../controllers/artigos.controller");
     let router = require("express").Router();
 
-    /**
+    router.post("/", artigosController.create);
+    router.get("/", artigosController.findAll);
+    router.get("/findByTitle/titulo", artigosController.findByTitle);
+    router.get("/findById/id", artigosController.findById); //usa o : pq pode ser um valor dinamico
+
+    app.use("/artigos", router);
+        /**
      implementacao equivalente (e mais verbosa)
-    router.post("/", function(req, res){i
+    router.post("/", function(req, res){
         artigosController.create(req, res);
     })
      */
-
-    router.post("/", artigosController.create);
-    router.get("/", artigosController.findAll);
-
-    app.use("/artigos", router);
 }
