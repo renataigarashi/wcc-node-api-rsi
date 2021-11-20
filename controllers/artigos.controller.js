@@ -5,14 +5,15 @@ const tabelaArtigos = database.artigos;
 
 //Cria um novo artigo
 exports.create = (req, res) => {
+    const { titulo, descricao, publicado } = request.body
     const artigo = {
-        titulo: req.body.titulo,
-        descricao: req.body.descricao,
-        publicado: req.body.publicado
+        titulo,      // titulo: req.body.titulo,
+        descricao,   // descricao: req.body.descricao,
+        publicado             // publicado: req.body.publicado
     };
 
     if(!artigo.titulo){
-        return res.status(400).send("O artigo deve conter um título definido");
+        return res.status(400).send("O artigo deve conter um título definido"); //usou o return para parar nesse ponto...
     }
 
     tabelaArtigos.create(artigo)
@@ -34,7 +35,7 @@ exports.findAll = (req, res) => {
 }
 
 exports.findById = (req, res) => {
-    let idArtigo = req.query.id;
+    const { id : idArtigo } =  req.query; // fiz o destructuring e atribui ao idArtigo
 
     if(!idArtigo){
         res.status(400).send("Não foi possivel buscar um artigo pois o ID não foi informado.")
@@ -52,7 +53,7 @@ exports.findById = (req, res) => {
 }
 
 exports.findByTitle = (req, res) => {
-    let tituloArtigo = req.query.titulo;
+    const { titulo: tituloArtigo} = req.query;
     
     if(!tituloArtigo){
         res.status(400).send("Não foi possivel encontrar pois o título não foi informado.")
