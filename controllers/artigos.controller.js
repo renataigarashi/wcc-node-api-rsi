@@ -11,6 +11,10 @@ exports.create = (req, res) => {
         publicado: req.body.publicado
     };
 
+    if(!artigo.titulo){
+        return res.status(400).send("O artigo deve conter um título definido");
+    }
+
     tabelaArtigos.create(artigo)
     .then(() => res.send("Artigo criado com sucesso"))
     .catch((error) => {
@@ -30,20 +34,29 @@ exports.findAll = (req, res) => {
 }
 
 exports.findById = (req, res) => {
-    let id = req.query.id;
-    tabelaArtigos.findByPk(id).then(function(data){
+    let idArtigo = req.query.id;
+
+    if(!idArtigo){
+        res.status(400).send("Não foi possivel buscar um artigo pois o ID não foi informado.")
+    }
+
+    tabelaArtigos.findByPk(idArtigo).then(function(data){
         if (data){
             res.send(data);
         } else {
-            res.status(404).send({message: `Não foi possível encontrar o artigo com o id: ${id}`});
+            res.status(404).send({message: `Não foi possível encontrar o artigo com o id: ${idArtigo}`});
         }
     }).catch(function(){
-        res.status(500).send({message: `Erro obtendo artigo id= ${id}`});
+        res.status(500).send({message: `Erro obtendo artigo id= ${idArtigo}`});
     });
 }
 
 exports.findByTitle = (req, res) => {
     let tituloArtigo = req.query.titulo;
+    
+    if(!tituloArtigo){
+        res.status(400).send("Não foi possivel encontrar pois o título não foi informado.")
+    }
     tabelaArtigos.findOne({ where: {titulo: tituloArtigo}}).then(function(data){
         if (data) {
             res.send(data);
