@@ -24,6 +24,12 @@ module.exports = (app) => {
     router.get("/", artigosController.findAll);
     router.get("/findByTitle/titulo", artigosController.findByTitle);
     router.get("/findById/id", artigosController.findById); //usa o : pq pode ser um valor dinamico
+    router.get("/findPublished", artigosController.findPublished);
+   
+    router.put("/:id", artigosController.updateById);
+    
+    router.delete("/", artigosController.deleteAll);
+    router.delete("/:id", artigosController.deleteByID);
 
     app.use("/artigos", router);
         /**

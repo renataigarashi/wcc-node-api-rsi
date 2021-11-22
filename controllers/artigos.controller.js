@@ -5,7 +5,7 @@ const tabelaArtigos = database.artigos;
 
 //Cria um novo artigo
 exports.create = (req, res) => {
-    const { titulo, descricao, publicado } = request.body
+    const { titulo, descricao, publicado } = req.body //desestruturado
     const artigo = {
         titulo,      // titulo: req.body.titulo,
         descricao,   // descricao: req.body.descricao,
@@ -24,6 +24,7 @@ exports.create = (req, res) => {
 })
 };
 
+//retorna todos os artigos
 exports.findAll = (req, res) => {
 
      tabelaArtigos.findAll().then(function(data){
@@ -34,8 +35,24 @@ exports.findAll = (req, res) => {
     })
 }
 
+//retorna itens publicados
+exports.findPublished = (req, res) => {
+    tabelaArtigos.findAll({where: { publicado: true} })
+    .then(dados => {
+        res.send(dados);
+    })
+    .catch(function (err) {
+        res.status(500).send(
+            {
+                message: "Ocorreu um erro ao encontrar artigos publicados."
+            }
+        );
+    });
+}
+
+//busca por ID
 exports.findById = (req, res) => {
-    const { id : idArtigo } =  req.query; // fiz o destructuring e atribui ao idArtigo
+    const { id : idArtigo } =  req.query; // fiz o destructuring do ide renomeei para idArtigo
 
     if(!idArtigo){
         res.status(400).send("Não foi possivel buscar um artigo pois o ID não foi informado.")
@@ -52,6 +69,7 @@ exports.findById = (req, res) => {
     });
 }
 
+//busca por titulo
 exports.findByTitle = (req, res) => {
     const { titulo: tituloArtigo} = req.query;
     
@@ -69,6 +87,77 @@ exports.findByTitle = (req, res) => {
     })
 }
 
+
+// Atualiza nome pelo id
+
+exports.updateById = (req, res) => {
+
+    const { body: updates } = req;
+    const { id: idArtigo } = req.params;
+    const query = { where: { id: idArtigo }, returning: true } //returning: true - se der tudo certo, retorna o artigo
+
+
+    tabelaArtigos
+        .update(updates, query)
+        .then(function (data){
+           
+            const linhasAtualizadas = data[0];
+            
+            if (linhasAtualizadas === 0){
+                res.status(404).send("Nao foi encontrado artigo para ser atualizado a partid do ID " + idArtigo);
+
+            } else {
+                const artigoAtualizados = data[1];
+                res.send(artigoAtualizados);
+            }
+        })
+        .catch(function(err){
+            res.status(500).send("Ocorreu um erro ao atualizar artigo")
+            });
+}   
+ 
+//DELETAR TODOS
+
+exports.deleteAll = (req, res) => {
+    tabelaArtigos.destroy({ where: {}, truncate: false }) //truncate vai preservar estrutura da tabela
+        .then(function(itensDeletados) {
+            res.send("Foram deletados " + itensDeletados + " artigos")
+        })
+        .catch(function(err){
+            res.status(500).send("Ocorreu um erro ao deletar os artigos")
+        })
+}
+
+//DELETAR POR ID
+exports.deleteByID = (req, res) => {
+    const { id: idArtigo} = req.params;
+
+    tabelaArtigos.destroy ({ where:  { id: idArtigo}})
+
+    .then(function(itemDeletado) {
+        if (itemDeletado === 0){
+        res.send("O item " +  idArtigo + "nao foi encontrado");
+    } else {
+        res.send("Artigo " + idArtigo + "deletado com sucesso");
+    }
+})
+    .catch(function(err){
+        res.status(500).send("Ocorreu um erro ao deletar o artigos")
+    })
+}
+
+
+//Atualizar muitos
+
+// exports.updateMany = (req, res) => {
+//     const { body: updates} = req;
+
+//     const query = {
+//         returning: true, 
+//         where: {descricao: "Descricao o artigo"}/
+
+//     }
+// }
 
 
 //promise - "promete que vai acontecer algo", mas isso pode ou não acontecer
